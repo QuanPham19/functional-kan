@@ -1,0 +1,6 @@
+german_credit:
+  path: "../data/german_credit_data.csv"
+
+us_treasury:
+  path: "../data/us_treasury_rates.csv"
+
