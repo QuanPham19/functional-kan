@@ -4,7 +4,7 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler, MinMaxScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 
-def data_retrieval():
+def credit_data_retrieval():
     df_credit = pd.read_csv('/workspaces/functional-kan/phase_1/data/german_credit_data.csv')
     df_credit['Risk'] = df_credit['Risk'].map({'good': 1, 'bad': 0})
 
