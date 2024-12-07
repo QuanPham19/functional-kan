@@ -37,10 +37,10 @@ class CreditDataSet(Dataset):
 
 
 class Net(nn.Module):
-    def __init__(self):
+    def __init__(self, n_inputs):
         super(Net, self).__init__()
         # Define the three linear layers
-        self.fc1 = nn.Linear(27, 32)
+        self.fc1 = nn.Linear(n_inputs, 32)
         self.fc2 = nn.Linear(32, 32)
         self.fc3 = nn.Linear(32, 1)
         self.dropout = nn.Dropout(0.1)
