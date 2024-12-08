@@ -1,3 +1,13 @@
+## Progress track (8 Dec 2024)
+
+### Done
+- Define MSE metrics for model training
+- Reduce MSE error from 0.35 to 0.13 (still far from best Ridge: 0.009)
+- Find better parameters for learning rate and network size
+
+### To-do:
+- Multivariate prediction
+
 ## Progress track (7 Dec 2024)
 
 ### Done
@@ -7,4 +17,3 @@
 
 ### To-do:
 - KAN implementation and comparison
-- Multivariate prediction and metrics
