@@ -2,8 +2,10 @@
 
 ### Done
 - Define MSE metrics for model training
-- Reduce MSE error from 0.35 to 0.13 (still far from best Ridge: 0.009)
+- Implement cross-validation instead of K-Fold due to data leakage
 - Find better parameters for learning rate and network size
+- Multivariate settings
+- MSE error of 0.026 
 
 ### To-do:
 - Multivariate prediction
