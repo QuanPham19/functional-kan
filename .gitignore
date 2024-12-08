@@ -1,3 +1,5 @@
 venv/
-phase_1/notebooks/model/
-phase_1/notebooks/figures/
+phase_1/notebooks_credit/model/
+phase_1/notebooks_credit/figures/
+phase_1/notebooks_treasury/model/
+phase_1/notebooks_treasury/figures/
