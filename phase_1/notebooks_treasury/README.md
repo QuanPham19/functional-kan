@@ -8,7 +8,7 @@
 - MSE error of 0.026 
 
 ### To-do:
-- Multivariate prediction
+- MLP comparison and KAN tuning
 
 ## Progress track (7 Dec 2024)
 
