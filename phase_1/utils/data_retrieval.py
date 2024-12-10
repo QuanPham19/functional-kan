@@ -23,7 +23,7 @@ def credit_data_retrieval():
     df_credit['Monthly pay'] = (df_credit["Credit amount"] / df_credit["Duration"])
 
     # Age categorize
-    # df_credit['Age'] = df_credit['Age'].apply(age_categorize)
+    df_credit['Age'] = df_credit['Age'].apply(age_categorize)
 
 
     X = df_credit.drop(columns='Risk')
