@@ -1,21 +1,18 @@
-## Progress track (8 Dec 2024)
+## Second Application - Yield Curve Prediction
 
-### Done
-- Define MSE metrics for model training
-- Implement cross-validation instead of K-Fold due to data leakage
-- Find better parameters for learning rate and network size
-- Multivariate settings
-- MSE error of 0.026 
+### 1. Dataset:
+- Daily treasury par yield curve rates obtained from https://home.treasury.gov/
+- Split to train (80%-90%) and test set (10%-20%)
+- Feature: all yields at different maturity of the past 3-5 business days
 
-### To-do:
-- MLP comparison and KAN tuning
+### 2. Modeling:
+- KAN network learnt only from training data
+- Recursive prediction: last prediction to be feature of the next prediction
+- Horizon: 5-10-20 business days
+- Cross-validation by shifting 10 days forward or backward
 
-## Progress track (7 Dec 2024)
-
-### Done
-- Method: deep learning with 10-fold cross validation
-- Linear/Ridge regression reach < 0.01 MSE
-- Random forest/MLP reach > 0.2 MSE
-
-### To-do:
-- KAN implementation and comparison
+### 3. Benchmark:
+- Naive prediction: use the last observation of training set to be prediction of all future dates
+- Random walk: estimate drift and volatility by historical data, and simulate forward by GBM
+- Conventional models: linear regression, ridge, lasso and MLP with recursive approach
+- Past research papers: Diebold & Li, regime-switching 
