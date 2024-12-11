@@ -14,3 +14,4 @@
 ### 3. Benchmark:
 - Naive prediction: use the most popular class to be the prediction of all 
 - Conventional models: linear regression, ridge, lasso, SVM and MLP
+- Past research papers on credit scoring
