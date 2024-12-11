@@ -1,6 +1,7 @@
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OneHotEncoder, StandardScaler, MinMaxScaler
+from sklearn.preprocessing import OneHotEncoder, StandardScaler, MinMaxScaler, RobustScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn import set_config
@@ -15,6 +16,12 @@ def age_categorize(num):
     else:
         return '3'
 
+def housing_categorize(char):
+    if char != 'own':
+        return 'other'
+    else:
+        return char
+
 def credit_data_retrieval():
     df_credit = pd.read_csv('/workspaces/functional-kan/phase_1/data/german_credit_data.csv')
     df_credit['Risk'] = df_credit['Risk'].map({'good': 1, 'bad': 0})
@@ -22,8 +29,17 @@ def credit_data_retrieval():
     # Monthly pay
     df_credit['Monthly pay'] = (df_credit["Credit amount"] / df_credit["Duration"])
 
+    # Age-amount interaction
+    # df_credit['Age_Amount'] = df_credit['Age'] * df_credit['Credit amount']
+
+    # Log credit amount
+    # df_credit['Credit amount'] = np.log(df_credit['Credit amount'])
+
     # Age categorize
     df_credit['Age'] = df_credit['Age'].apply(age_categorize)
+
+    # Housing categorize
+    # df_credit['Housing'] = df_credit['Housing'].apply(housing_categorize)
 
 
     X = df_credit.drop(columns='Risk')
@@ -44,7 +60,8 @@ def credit_data_retrieval():
         transformers=[
             ('num', numerical_transformer, numerical_features),
             ('cat', categorical_transformer, categorical_features)
-        ]
+        ],
+        remainder='passthrough'
     )
 
     # Create the pipeline
