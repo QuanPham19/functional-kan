@@ -1,9 +1,10 @@
 ## Second Application - Yield Curve Prediction
 
 ### 1. Dataset:
-- Daily treasury par yield curve rates obtained from https://home.treasury.gov/
+- Daily treasury par yield curve rates obtained from: https://home.treasury.gov/
 - Split to train (80%-90%) and test set (10%-20%)
-- Feature: all yields at different maturity of the past 3-5 business days
+- Features: all yields at different maturity of the past 3-5 business days
+- Target: next day yields at different maturity
 
 ### 2. Modeling:
 - KAN network learnt only from training data
