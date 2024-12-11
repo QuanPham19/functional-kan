@@ -8,8 +8,8 @@ from sklearn import set_config
 def age_categorize(num):
     if num < 25:
         return '0'
-    # elif num < 36:
-    #     return '1'
+    elif num < 36:
+        return '1'
     elif num < 50:
         return '2'
     else:
