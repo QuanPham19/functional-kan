@@ -32,4 +32,4 @@ Regarding forecasting procedure, 2 approaches are considerable:
 
 It is common to use RMSE and sliding-window cross validation to evaluate forecasting performance. However, 1 week or shorter horizon is extremely difficult to beat random walk benchmarks. It is better to look at mid-range horizon 1-6 months. 
 
-To justify outperformance, hypothesis tests can be applied such as Diebold-Mariano (1995) and Harvey, Leybourne and Newbold (1997)
+To justify outperformance, hypothesis tests can be applied such as Diebold-Mariano (1995) and Harvey, Leybourne and Newbold (1997).
