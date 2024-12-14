@@ -1,6 +1,6 @@
-## Yield curve forecasting - Literature review
+# Yield curve forecasting - Literature review
 
-### 1. List of references
+## 1. List of references:
 
 [1] A comparison of multitask and single task learning with artificial neural networks for yield curve (Nunes, 2018)
 
