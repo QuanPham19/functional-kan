@@ -25,4 +25,10 @@ In terms of methodology, 3 ideas are often considered: Statistical Modeling, Dee
 Regarding forecasting procedure, 2 approaches are considerable:
 - Direct: train 1 model for each forward horizon
 - Iterative: train only 1 model and output of last prediction becomes feature of next prediction
-- Concern: direct is better to eliminate recursive noises, but iterative is better to reduce runtime
+- Concerns: direct is better to eliminate recursive noises, but iterative is better to reduce runtime
+
+## 4. Benchmarks and evaluation:
+
+It is common to use RMSE and sliding-window cross validation to evaluate forecasting performance. However, 1 week or shorter horizon is extremely difficult to beat random walk benchmarks. It is better to look at mid-range horizon 1-6 months. 
+
+To justify outperformance, hypothesis tests can be applied such as Diebold-Mariano (1995) and Harvey, Leybourne and Newbold (1997)
