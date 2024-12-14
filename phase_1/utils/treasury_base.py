@@ -49,14 +49,14 @@ def flatten_data_retrieval(h=5):
 
     return df_flat
 
-def ma_data_retrieval(window_list=[5, 10, 15, 20]):
+def ma_data_retrieval(window_list=[5, 10, 15, 20], lag=1):
     df = treasury_data_retrieval()
     df_ma = df.set_index('Date')
     targets = df_ma.columns
 
     for col in targets:
         for size in window_list:
-            df_ma[f'{col}_MA{size}'] = df_ma[col].shift(1).rolling(window=size).mean()
+            df_ma[f'{col}_MA{size}'] = df_ma[col].shift(lag).rolling(window=size).mean()
 
     df_ma.dropna(inplace=True)
     return df_ma
