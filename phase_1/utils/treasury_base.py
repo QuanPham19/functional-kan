@@ -20,10 +20,12 @@ torch.set_default_dtype(torch.float64)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 current_dir = os.path.dirname(__file__)
-file_path = os.path.join(current_dir, '..', 'data', 'us_treasury_rates_large.csv')
+file_name = 'us_treasury_rates_large.csv'
 
 
-def treasury_data_retrieval(file_path=file_path):
+def treasury_data_retrieval(file_name=file_name):
+    file_path = os.path.join(current_dir, '..', 'data', file_name)
+
     df = pd.read_csv(file_path)
     df['Date'] = pd.to_datetime(df['Date'])
     df.sort_values(by='Date', ascending=True, inplace=True)
