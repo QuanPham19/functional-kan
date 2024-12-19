@@ -7,20 +7,26 @@ from sklearn.pipeline import Pipeline
 from sklearn import set_config
 
 def age_categorize(num):
-    if num < 25:
+    if num < 31:
         return '0'
-    elif num < 36:
+    elif num < 55:
         return '1'
-    elif num < 50:
-        return '2'
+    # elif num < 60:
+    #     return '2'
     else:
-        return '3'
+        return '2'
 
 def housing_categorize(char):
     if char != 'own':
         return 'other'
     else:
         return char
+
+def savings_categorize(char):
+    if char in ['little', 'moderate']:
+        return '0'
+    else:
+        return '1'
 
 def credit_data_retrieval():
     df_credit = pd.read_csv('/workspaces/functional-kan/phase_1/data/german_credit_data.csv')
@@ -39,7 +45,12 @@ def credit_data_retrieval():
     df_credit['Age'] = df_credit['Age'].apply(age_categorize)
 
     # Housing categorize
-    # df_credit['Housing'] = df_credit['Housing'].apply(housing_categorize)
+    df_credit['Housing'] = df_credit['Housing'].apply(housing_categorize)
+
+    # Savings categorize
+    df_credit['Saving accounts'] = df_credit['Saving accounts'].apply(savings_categorize)
+
+    # print(df_credit)
 
 
     X = df_credit.drop(columns='Risk')
