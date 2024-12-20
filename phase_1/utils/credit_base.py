@@ -9,7 +9,7 @@ from sklearn import set_config
 def age_categorize(num):
     if num < 31:
         return 'Young'
-    elif num < 55:
+    elif num < 56:
         return 'Middle'
     else:
         return 'Old'
