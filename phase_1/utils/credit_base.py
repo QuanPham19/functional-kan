@@ -8,19 +8,17 @@ from sklearn import set_config
 
 def age_categorize(num):
     if num < 31:
-        return '0'
+        return 'Young'
     elif num < 55:
-        return '1'
-    # elif num < 60:
-    #     return '2'
+        return 'Middle'
     else:
-        return '2'
+        return 'Old'
 
 def housing_categorize(char):
     if char != 'own':
-        return 'other'
+        return 0
     else:
-        return char
+        return 1
 
 def savings_categorize(char):
     if char in ['little', 'moderate']:
@@ -28,9 +26,20 @@ def savings_categorize(char):
     else:
         return '1'
 
+def purpose_categorize(char):
+    if char == 'radio/TV':
+        return 'Safe'
+    elif char in ['education', 'repairs']:
+        return 'Risky'
+    else:
+        return 'Neutral'
+
 def credit_data_retrieval():
     df_credit = pd.read_csv('/workspaces/functional-kan/phase_1/data/german_credit_data.csv')
     df_credit['Risk'] = df_credit['Risk'].map({'good': 1, 'bad': 0})
+
+    # df_credit.dropna(inplace=True)
+    # df_credit.dropna(inplace=True)
 
     # Monthly pay
     df_credit['Monthly pay'] = (df_credit["Credit amount"] / df_credit["Duration"])
