@@ -66,4 +66,31 @@ def ma_data_retrieval(window_list=[5, 10, 15, 20], lag=1):
 def kan_cross_validate():
     pass
 
+
+def g(e_it,n=0):
+    v=0
+    if (n==0):
+        v=e_it**2
+    if (n==1):
+        v=abs(e_it)
+    return v
+    
+def DM(y1,y2,y,h):
+    dm = 0
+    if (y1.shape==y2.shape) and (y1.shape==y.shape):
+        e_1 = y1 - y
+        e_2 = y2 - y
+        T = y.shape[0]
+        d = g(e_1) - g(e_2)
+        dbar = np.mean(d)
+        fh0 = gamh(0,d)
+        M = int(math.floor(math.pow(T,1/3))+1)
+        for k in range(-M,M):
+            fh0 = fh0 + 2*gamh(k,d)
+        fh0 = fh0*(1/(2*math.pi))
+        dm = dbar/(math.pow((2*math.pi*fh0)/T,1/2))
+        hln=math.pow((T+1-2*h+h*(h-1))/T,1/2)*dm
+        return hln
+    else: 
+        return -10000
 # print(treasury_data_retrieval())
