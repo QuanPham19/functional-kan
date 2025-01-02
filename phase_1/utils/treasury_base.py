@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import math
 
 import torch.nn as nn
 import torch.nn.functional as F
@@ -74,7 +75,16 @@ def g(e_it,n=0):
     if (n==1):
         v=abs(e_it)
     return v
+
+def gamh(k,d):
+    gam = 0
+    db = np.mean(d)
+    for tt in range((abs(k)+1),(d.shape[0])):
+        gam = gam + (d[tt]-db)*(d[tt-abs(k)]-db)    
     
+    gam = gam/(d.shape[0])
+    return gam
+
 def DM(y1,y2,y,h):
     dm = 0
     if (y1.shape==y2.shape) and (y1.shape==y.shape):
