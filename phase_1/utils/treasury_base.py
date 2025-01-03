@@ -68,39 +68,80 @@ def kan_cross_validate():
     pass
 
 
-def g(e_it,n=0):
-    v=0
-    if (n==0):
-        v=e_it**2
-    if (n==1):
-        v=abs(e_it)
-    return v
-
-def gamh(k,d):
-    gam = 0
-    db = np.mean(d)
-    for tt in range((abs(k)+1),(d.shape[0])):
-        gam = gam + (d[tt]-db)*(d[tt-abs(k)]-db)    
+def dm_test(actual_lst, pred1_lst, pred2_lst, h, mode, crit="MSE", power = 2):
+    # Import libraries
+    from scipy.stats import t
+    import collections
+    import pandas as pd
+    import numpy as np
     
-    gam = gam/(d.shape[0])
-    return gam
+    # Initialise lists
+    e1_lst = []
+    e2_lst = []
+    d_lst  = []
+    
+    # convert every value of the lists into real values
+    actual_lst = pd.Series(actual_lst).apply(lambda x: float(x)).tolist()
+    pred1_lst = pd.Series(pred1_lst).apply(lambda x: float(x)).tolist()
+    pred2_lst = pd.Series(pred2_lst).apply(lambda x: float(x)).tolist()
+    
+    # Length of lists (as real numbers)
+    T = float(len(actual_lst))
+    
+    # construct d according to crit
+    if (crit == "MSE"):
+        for actual,p1,p2 in zip(actual_lst,pred1_lst,pred2_lst):
+            e1_lst.append((actual - p1)**2)
+            e2_lst.append((actual - p2)**2)
+        for e1, e2 in zip(e1_lst, e2_lst):
+            d_lst.append(e1 - e2)
+    elif (crit == "MAD"):
+        for actual,p1,p2 in zip(actual_lst,pred1_lst,pred2_lst):
+            e1_lst.append(abs(actual - p1))
+            e2_lst.append(abs(actual - p2))
+        for e1, e2 in zip(e1_lst, e2_lst):
+            d_lst.append(e1 - e2)
+    elif (crit == "MAPE"):
+        for actual,p1,p2 in zip(actual_lst,pred1_lst,pred2_lst):
+            e1_lst.append(abs((actual - p1)/actual))
+            e2_lst.append(abs((actual - p2)/actual))
+        for e1, e2 in zip(e1_lst, e2_lst):
+            d_lst.append(e1 - e2)
+    elif (crit == "poly"):
+        for actual,p1,p2 in zip(actual_lst,pred1_lst,pred2_lst):
+            e1_lst.append(((actual - p1))**(power))
+            e2_lst.append(((actual - p2))**(power))
+        for e1, e2 in zip(e1_lst, e2_lst):
+            d_lst.append(e1 - e2)    
+    
+    # Mean of d        
+    mean_d = pd.Series(d_lst).mean()
+    
+    # Find autocovariance and construct DM test statistics
+    def autocovariance(Xi, N, k, Xs):
+        autoCov = 0
+        T = float(N)
+        for i in np.arange(0, N-k):
+              autoCov += ((Xi[i+k])-Xs)*(Xi[i]-Xs)
+        return (1/(T))*autoCov
+    gamma = []
+    for lag in range(0,h):
+        gamma.append(autocovariance(d_lst,len(d_lst),lag,mean_d)) # 0, 1, 2
+    V_d = (gamma[0] + 2*sum(gamma[1:]))/T
+    DM_stat=V_d**(-0.5)*mean_d
+    # print(DM_stat)
+    harvey_adj=((T+1-2*h+h*(h-1)/T)/T)**(0.5)
+    DM_stat = harvey_adj*DM_stat
 
-def DM(y1,y2,y,h):
-    dm = 0
-    if (y1.shape==y2.shape) and (y1.shape==y.shape):
-        e_1 = y1 - y
-        e_2 = y2 - y
-        T = y.shape[0]
-        d = g(e_1) - g(e_2)
-        dbar = np.mean(d)
-        fh0 = gamh(0,d)
-        M = int(math.floor(math.pow(T,1/3))+1)
-        for k in range(-M,M):
-            fh0 = fh0 + 2*gamh(k,d)
-        fh0 = fh0*(1/(2*math.pi))
-        dm = dbar/(math.pow((2*math.pi*fh0)/T,1/2))
-        hln=math.pow((T+1-2*h+h*(h-1))/T,1/2)*dm
-        return hln
-    else: 
-        return -10000
-# print(treasury_data_retrieval())
+    # Find p-value
+    if mode == 'two-sided':
+        p_value = 2*t.cdf(-abs(DM_stat), df = T - 1)
+    elif mode == 'smaller':
+        p_value = t.cdf(DM_stat, df=T - 1)
+
+    # Construct named tuple for return
+    dm_return = collections.namedtuple('dm_return', 'DM p_value')
+    
+    rt = dm_return(DM = DM_stat, p_value = p_value)
+    
+    return rt
