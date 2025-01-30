@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 from scipy.interpolate import make_lsq_spline, BSpline
 
+import warnings
+warnings.filterwarnings("ignore")
+
 def points_to_curve(
         y, 
         x = np.array([1/12, 2/12, 3/12, 6/12, 1, 2, 3, 5, 7, 10, 20, 30]), 
@@ -113,7 +116,7 @@ def treasury_data_retrieval(file_name):
             dataframe with index as dates and columns as maturities
     '''
 
-    df = pd.read_csv(file_name)
+    df = pd.read_csv(f'../data/{file_name}')
     df['Date'] = pd.to_datetime(df['Date'])
     df.sort_values(by='Date', ascending=True, inplace=True)
     df = df.reset_index(drop=True)
@@ -121,9 +124,10 @@ def treasury_data_retrieval(file_name):
 
     return df 
 
-def basis_data_retrieval(data):
+def basis_operations(data, reverse=False):
     '''
-    Turn each row into a functional information vector.
+    Turn each row into a functional information vector in normal mode.
+    Turn each functional information vector to a row in reverse mode.
 
     Args:
     -----
@@ -135,13 +139,17 @@ def basis_data_retrieval(data):
         basis: pd.DataFrame
             basis dataframe of functional information rows
     '''
+    if reverse:
+        out = data.apply(spline_curve_to_points, axis=1, result_type='expand')
+        out.columns = [f'Maturity_{i}' for i in range(out.shape[1])]
+    else:
+        out = data.apply(points_to_curve, axis=1, result_type="expand")
+        out.columns = [f'Basis_{i}' for i in range(out.shape[1])]
 
-    basis = data.apply(points_to_curve, axis=1, result_type="expand")
-    basis.columns = [f'Basis_{i}' for i in range(basis.shape[1])]
-    return basis
+    return out
 
-def direct_pred_retrieval(
-        data, 
+def full_df_retrieval(
+        df, 
         window_list = [1, 3, 5],
         lag_list = [1],
         shift_list = [_ for _ in range(20)]
@@ -167,6 +175,7 @@ def direct_pred_retrieval(
         targets: list
             array of columns to be predicted by modelling
     '''
+    data = df.copy()
     targets = data.columns
 
     # Generate future columns
@@ -180,3 +189,10 @@ def direct_pred_retrieval(
             for col in targets:
                 data[f'{col}_-_{lag}_window_{window}'] = data[col].shift(1).rolling(window).mean()
     return data, targets
+
+
+# import os 
+# current_directory = os.getcwd()
+# print("Current Directory:", current_directory)
+
+# print(treasury_data_retrieval('us_treasury_rates_large.csv').head())
