@@ -69,6 +69,34 @@ def spline_curve_to_points(
     y_pred = spline(x)
     return y_pred
 
+def nss_curve_to_points(
+        coef, 
+        x = np.array([1/12, 2/12, 3/12, 6/12, 1, 2, 3, 5, 7, 10, 20, 30]), 
+        t = [1, 2, 3, 5], 
+        k = 3
+    ):
+    '''
+    Convert NSS model curve (stored in functional information vector) to discrete points.
+    Useful to convert neural network output to same type as discrete truth values to evaluate errors.
+
+    Args:
+    -----
+        coef: list 
+            array of coeffcients corresponding to each basis spline
+        x: list
+            array of x-axis coordination of discrete points (in this application --> maturities)
+        t: list
+            array of coordination of knots 
+        k: int
+            degree of each basis spline
+
+    Returns:
+    --------
+        y_pred: list
+            discrete points extracted from the input spline
+    '''
+    pass
+
 def treasury_data_retrieval(file_name):
     # file_path = os.path.join(current_dir, '..', 'data', file_name)
     '''
