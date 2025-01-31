@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import torch
 from scipy.interpolate import make_lsq_spline, BSpline
 
 import warnings
@@ -36,7 +37,20 @@ def points_to_curve(
             (x[-1],)*(k+1)]
 
     spline = make_lsq_spline(x, y, t, k)
-    return spline.c
+    return torch.tensor(spline.c)
+
+def points_to_curve_2d(arr):
+    lst = []
+    for i in range(len(arr)):
+        lst.append(points_to_curve(
+                arr[i], 
+                x = np.array([1/12, 2/12, 3/12, 6/12, 1, 2, 3, 5, 7, 10, 20, 30]), 
+                t = [1, 2, 3, 5], 
+                k = 3
+            ))
+
+    ts = torch.stack(lst)
+    return ts 
 
 def spline_curve_to_points(
         coef, 
