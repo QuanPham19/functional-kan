@@ -141,11 +141,18 @@ def spline_curve_to_points_2d(arr):
     ts = torch.stack(lst)
     return ts 
 
-def nss(coef=torch.tensor([1, 2, 3, 4]), maturity=torch.tensor([1/12, 2/12, 3/12, 6/12, 1, 2, 3, 5, 7, 10, 20, 30])):
-    term1 = (1 - torch.exp(-coef[3] * maturity)) / (coef[3] * maturity)
-    term2 = term1 - torch.exp(-coef[3] * maturity)
-    return coef[0] + coef[1] * term1 + coef[2] * term2
+# def nss(coef=torch.tensor([1, 2, 3, 4]), maturity=torch.tensor([1/12, 2/12, 3/12, 6/12, 1, 2, 3, 5, 7, 10, 20, 30])):
+#     term1 = (1 - torch.exp(-coef[3] * maturity)) / (coef[3] * maturity)
+#     term2 = term1 - torch.exp(-coef[3] * maturity)
+#     return coef[0] + coef[1] * term1 + coef[2] * term2
 
+def nss(coef=torch.tensor([1, 2, 3, 4, 5, 6]), maturity=torch.tensor([1/12, 2/12, 3/12, 6/12, 1, 2, 3, 5, 7, 10, 20, 30])):
+    term1 = (1 - torch.exp(- maturity / coef[4] )) / (maturity / coef[4] )
+    term2 = term1 - torch.exp(- maturity / coef[4])
+    term3 = (1 - torch.exp(- maturity / coef[5])) / ( maturity / coef[5] ) - torch.exp(- maturity / coef[5])
+
+    return coef[0] + coef[1] * term1 + coef[2] * term2 + coef[3] * term3
+ 
 def nss_2d(arr, maturity=torch.tensor([1/12, 2/12, 3/12, 6/12, 1, 2, 3, 5, 7, 10, 20, 30])):
     lst = []
     for i in range(len(arr)):
