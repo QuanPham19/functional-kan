@@ -39,22 +39,41 @@ def points_to_curve(
     spline = make_lsq_spline(x, y, t, k)
     return torch.tensor(spline.c)
 
+# def points_to_curve_2d(arr):
+#     lst = []
+#     for i in range(len(arr)):
+#         lst.append(points_to_curve(
+#                 arr[i], 
+#                 x = np.array([1/12, 2/12, 3/12, 6/12, 1, 2, 3, 5, 7, 10, 20, 30]), 
+#                 t = [1, 2, 3, 5], 
+#                 k = 3
+#             ))
+
+#     ts = torch.stack(lst)
+#     return ts 
+
 def points_to_curve_2d(arr):
     lst = []
     for i in range(len(arr)):
-        lst.append(points_to_curve(
-                arr[i], 
-                x = np.array([1/12, 2/12, 3/12, 6/12, 1, 2, 3, 5, 7, 10, 20, 30]), 
-                t = [1, 2, 3, 5], 
-                k = 3
-            ))
+        ts_element = torch.empty(0)  # Initialize with an empty tensor
+        j = 0
+        while j < len(arr[i]):
+            new_element = points_to_curve(
+                arr[i][j:(j+12)],  # Fix: Use arr[i] instead of arr[j]
+                x=np.array([1/12, 2/12, 3/12, 6/12, 1, 2, 3, 5, 7, 10, 20, 30]), 
+                t=[1, 2, 3, 5], 
+                k=3
+            )
+            ts_element = torch.cat((ts_element, new_element)) if ts_element.numel() > 0 else new_element
+            j += 12
+        lst.append(ts_element)
 
     ts = torch.stack(lst)
-    return ts 
+    return ts
 
 def spline_curve_to_points(
         coef, 
-        x = np.array([1/12, 2/12, 3/12, 6/12, 1, 2, 3, 5, 7, 10, 20, 30]), 
+        x = torch.tensor([1/12, 2/12, 3/12, 6/12, 1, 2, 3, 5, 7, 10, 20, 30]), 
         t = [1, 2, 3, 5], 
         k = 3
     ):
@@ -82,18 +101,13 @@ def spline_curve_to_points(
           t,
           (x[-1],)*(k+1)]
 
-    spline = BSpline(t, coef, k)
+    spline = BSpline(t, coef.detach().numpy(), k)
     y_pred = spline(x)
-    return y_pred
+    return torch.tensor(y_pred, requires_grad=True)
 
-def nss_curve_to_points(
-        coef, 
-        x = np.array([1/12, 2/12, 3/12, 6/12, 1, 2, 3, 5, 7, 10, 20, 30]), 
-        t = [1, 2, 3, 5], 
-        k = 3
-    ):
+def spline_curve_to_points_2d(arr):
     '''
-    Convert NSS model curve (stored in functional information vector) to discrete points.
+    Convert spline curve (stored in functional information vector) to discrete points.
     Useful to convert neural network output to same type as discrete truth values to evaluate errors.
 
     Args:
@@ -112,7 +126,33 @@ def nss_curve_to_points(
         y_pred: list
             discrete points extracted from the input spline
     '''
-    pass
+    # t = np.r_[(x[0],)*(k+1),
+    #       t,
+    #       (x[-1],)*(k+1)]
+
+    # spline = BSpline(t, coef, k)
+    # y_pred = spline(x)
+    # return y_pred
+
+    lst = []
+    for i in range(len(arr)):
+        lst.append(spline_curve_to_points(coef=arr[i]))
+
+    ts = torch.stack(lst)
+    return ts 
+
+def nss(coef=torch.tensor([1, 2, 3, 4]), maturity=torch.tensor([1/12, 2/12, 3/12, 6/12, 1, 2, 3, 5, 7, 10, 20, 30])):
+    term1 = (1 - torch.exp(-coef[3] * maturity)) / (coef[3] * maturity)
+    term2 = term1 - torch.exp(-coef[3] * maturity)
+    return coef[0] + coef[1] * term1 + coef[2] * term2
+
+def nss_2d(arr, maturity=torch.tensor([1/12, 2/12, 3/12, 6/12, 1, 2, 3, 5, 7, 10, 20, 30])):
+    lst = []
+    for i in range(len(arr)):
+        lst.append(nss(coef=arr[i]))
+
+    ts = torch.stack(lst)
+    return ts 
 
 def treasury_data_retrieval(file_name):
     # file_path = os.path.join(current_dir, '..', 'data', file_name)
